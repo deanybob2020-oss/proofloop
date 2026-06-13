@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="card narrow">
+  <h2>What do you want to improve first?</h2>
+  <form method="post" class="form">
+    {% for area in focus_areas %}
+      <label class="choice">
+        <input type="radio" name="focus_area" value="{{ area }}" required>
+        <span>{{ area }}</span>
+      </label>
+    {% endfor %}
+    <button type="submit">Continue</button>
+  </form>
+</section>
+{% endblock %}

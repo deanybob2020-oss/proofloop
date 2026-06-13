@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="card">
+  <h2>Let&apos;s test this for 7 days.</h2>
+  <p>Focus area: <strong>{{ selected_focus }}</strong></p>
+
+  {% if experiments|length == 0 %}
+    <p>No experiments available for this focus area yet.</p>
+  {% else %}
+    <form method="post" class="form">
+      {% for experiment in experiments %}
+        <label class="choice">
+          <input type="radio" name="experiment_id" value="{{ experiment.id }}" required>
+          <span>{{ experiment.name }}</span>
+        </label>
+      {% endfor %}
+      <button type="submit">Start experiment</button>
+    </form>
+  {% endif %}
+</section>
+{% endblock %}
