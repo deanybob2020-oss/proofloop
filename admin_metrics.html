@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="card">
+  <h2>Validation Metrics</h2>
+  <p>Are people using it and getting value?</p>
+
+  <div class="grid">
+    <div class="stat"><h3>Total users</h3><p class="metric">{{ metrics.total_users }}</p></div>
+    <div class="stat"><h3>Active users today</h3><p class="metric">{{ metrics.active_users_today }}</p></div>
+    <div class="stat"><h3>Users with 1+ check-in</h3><p class="metric">{{ metrics.users_with_1plus_checkin }}</p></div>
+    <div class="stat"><h3>Users with 5+ check-ins</h3><p class="metric">{{ metrics.users_with_5plus_checkins }}</p></div>
+    <div class="stat"><h3>Users completed 7 days</h3><p class="metric">{{ metrics.users_completed_7_days }}</p></div>
+    <div class="stat"><h3>Experiments started</h3><p class="metric">{{ metrics.experiments_started }}</p></div>
+    <div class="stat"><h3>Experiments completed</h3><p class="metric">{{ metrics.experiments_completed }}</p></div>
+    <div class="stat">
+      <h3>Average score improvement</h3>
+      <p class="metric">
+        {% if metrics.avg_score_improvement is not none %}
+          {{ '%+.2f'|format(metrics.avg_score_improvement) }}%
+        {% else %}
+          N/A
+        {% endif %}
+      </p>
+    </div>
+  </div>
+
+  <h3>Retention</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Day</th>
+        <th>Retained</th>
+        <th>Eligible</th>
+        <th>Retention %</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Day 2</td>
+        <td>{{ metrics.retention_day_2.retained }}</td>
+        <td>{{ metrics.retention_day_2.eligible }}</td>
+        <td>{{ '%.2f'|format(metrics.retention_day_2.pct) ~ '%' if metrics.retention_day_2.pct is not none else 'N/A' }}</td>
+      </tr>
+      <tr>
+        <td>Day 7</td>
+        <td>{{ metrics.retention_day_7.retained }}</td>
+        <td>{{ metrics.retention_day_7.eligible }}</td>
+        <td>{{ '%.2f'|format(metrics.retention_day_7.pct) ~ '%' if metrics.retention_day_7.pct is not none else 'N/A' }}</td>
+      </tr>
+      <tr>
+        <td>Day 14</td>
+        <td>{{ metrics.retention_day_14.retained }}</td>
+        <td>{{ metrics.retention_day_14.eligible }}</td>
+        <td>{{ '%.2f'|format(metrics.retention_day_14.pct) ~ '%' if metrics.retention_day_14.pct is not none else 'N/A' }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p class="hint">Generated at {{ metrics.generated_at }} UTC</p>
+
+  <div class="actions">
+    <a class="button" href="{{ url_for('export_metrics_csv') }}">Export metrics CSV</a>
+    <a class="button ghost" href="{{ url_for('export_checkins_csv') }}">Export check-ins CSV</a>
+  </div>
+</section>
+
+<section class="card">
+  <h3>Daily reminder email</h3>
+  <p>Send reminder to users with an active experiment who have not checked in today.</p>
+  <div class="actions">
+    <form method="post" action="{{ url_for('admin_send_reminders') }}">
+      <input type="hidden" name="dry_run" value="1">
+      <button type="submit" class="button ghost">Run dry-run</button>
+    </form>
+    <form method="post" action="{{ url_for('admin_send_reminders') }}">
+      <input type="hidden" name="dry_run" value="0">
+      <button type="submit" class="button">Send now</button>
+    </form>
+  </div>
+</section>
+{% endblock %}
